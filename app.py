@@ -4,7 +4,9 @@ from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
     QPushButton,
+    QSlider,
     QSpinBox,
+    QVBoxLayout,
     QWidget,
 )
 
@@ -31,10 +33,28 @@ class Window(QWidget):
         self.toggle_button.setCheckable(True)
         self.toggle_button.toggled.connect(self.button_method)
 
-        layout = QHBoxLayout()
-        layout.addWidget(self.spinbox)
-        layout.addWidget(self.toggle_button)
-        self.setLayout(layout)
+        self.slider = QSlider(Qt.Orientation.Vertical)
+        self.slider.setRange(0, 255)
+        
+        self.secondary_spinbox = QSpinBox()
+        self.secondary_spinbox.setRange(0, 255)
+        self.secondary_spinbox.setReadOnly(True)
+        self.secondary_spinbox.setButtonSymbols(QSpinBox.ButtonSymbols.NoButtons)
+        self.secondary_spinbox.setAlignment(Qt.AlignCenter)
+
+        main_layout = QHBoxLayout()
+
+        controls_layout = QVBoxLayout()
+        controls_layout.addWidget(self.spinbox)
+        controls_layout.addWidget(self.toggle_button)
+
+        right_layout = QVBoxLayout()
+        right_layout.addWidget(self.slider)
+        right_layout.addWidget(self.secondary_spinbox)
+
+        main_layout.addLayout(controls_layout)
+        main_layout.addLayout(right_layout)
+        self.setLayout(main_layout)
 
     def button_method(self, running: bool) -> None:
         self.toggle_button.setText("Stop" if running else "Start")
