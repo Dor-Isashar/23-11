@@ -1,6 +1,5 @@
 import sys
-
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt ,QTimer
 from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
@@ -9,36 +8,24 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-
 class Window(QWidget):
     def __init__(self) -> None:
         super().__init__()
 
         self.setWindowTitle("Spinbox Control")
         self.setGeometry(100, 100, 400, 400)
+
+        self.counter = 0
+                
         self.spinbox = QSpinBox()
         self.spinbox.setRange(0, 10000)
         self.spinbox.setReadOnly(True)
         self.spinbox.setButtonSymbols(QSpinBox.ButtonSymbols.NoButtons)
         self.spinbox.setAlignment(Qt.AlignCenter)
-        self.spinbox.setStyleSheet("""
-            QSpinBox {
-                min-width: 150px;
-                min-height: 42px;
-                padding: 8px 16px;
-                border: 2px solid #cbd5e1;
-                border-radius: 10px;
-                background-color: #ffffff;
-                color: #1e293b;
-                font-size: 16px;
-                font-weight: 600;
-            }
-
-            QSpinBox:focus {
-                border-color: #4f46e5;
-            }
-        """)
-        
+        self.spinbox.setStyleSheet("QSpinBox { font-size: 24px; }")
+                           
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.timer_method)
         
         self.toggle_button = QPushButton("Start")
         self.toggle_button.setCheckable(True)
@@ -51,8 +38,15 @@ class Window(QWidget):
 
     def button_method(self, running: bool) -> None:
         self.toggle_button.setText("Stop" if running else "Start")
-
-
+        if running:
+            self.timer.start(10)
+        else:
+            self.timer.stop()
+    
+    def timer_method(self) -> None:        
+        self.counter += 1
+        self.spinbox.setValue(self.counter)
+    
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = Window()
